@@ -15,17 +15,15 @@
 
 'use strict';
 
-const express = require('express');
-const { Server } = require('socket.io');
-const http = require('http');
-const Queue = require('bull');
-const redis = require('redis');
-const puppeteer = require('puppeteer');
-const axios = require('axios');
-const pino = require('pino');
-const register = require('prom-client').register;
-const Counter = require('prom-client').Counter;
-const Histogram = require('prom-client').Histogram;
+import express from 'express';
+import { Server } from 'socket.io';
+import http from 'http';
+import Queue from 'bull';
+import redis from 'redis';
+import puppeteer from 'puppeteer';
+import axios from 'axios';
+import pino from 'pino';
+import { register, Counter, Histogram } from 'prom-client';
 
 /**
  * ============================================================================
@@ -825,6 +823,27 @@ async function initialize() {
     );
     logger.info('✅ Automation engine initialized');
 
+    // Initialize AI Kernel (Phase 6)
+    // Dynamic import for ES modules compatibility
+    try {
+      const { AIKernel } = await import('./integrations/kernel/AIKernel.js');
+      const { default: KernelCLI } = await import('./integrations/kernel/KernelCLI.js');
+      const { default: setupKernelRoutes } = await import('./integrations/kernel/KernelAPI.js');
+      
+      const kernel = new AIKernel(app, { maxLearningIterations: 10000 });
+      await kernel.initialize();
+      logger.info('✅ AI Kernel initialized (Phase 6)');
+
+      const cli = new KernelCLI(kernel);
+      setupKernelRoutes(app, kernel, cli);
+      logger.info('✅ Kernel CLI & API routes registered');
+
+      global.aiKernel = kernel;
+      global.kernelCLI = cli;
+    } catch (error) {
+      logger.warn('AI Kernel initialization skipped (ES module issue):', error.message);
+    }
+
     // Start server
     server.listen(config.port, () => {
       logger.info(`✅ Server running on http://localhost:${config.port}`);
@@ -852,4 +871,4 @@ process.on('SIGTERM', async () => {
 // Start
 initialize();
 
-module.exports = { app, server, aiRouter, automationEngine };
+export { app, server, aiRouter, automationEngine };
