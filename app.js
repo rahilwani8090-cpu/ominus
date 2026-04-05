@@ -911,45 +911,45 @@ const App = {
     },
 
     saveAutomationSettings() {
-        const settings = {
-            autoSummarize: document.getElementById('autoSummarize').checked,
-            autoExtractItems: document.getElementById('autoExtractItems').checked,
-            autoTags: document.getElementById('autoTags').checked,
-            enableExports: document.getElementById('enableExports').checked,
-            enableBatchMode: document.getElementById('enableBatchMode').checked,
-            enableCompare: document.getElementById('enableCompare').checked,
-            autoRoute: document.getElementById('autoRoute').checked,
-        };
+        const autoSummarizeEl = document.getElementById('autoSummarize');
+        const autoExtractItemsEl = document.getElementById('autoExtractItems');
+        const autoTagsEl = document.getElementById('autoTags');
+        const enableExportsEl = document.getElementById('enableExports');
+        const enableBatchModeEl = document.getElementById('enableBatchMode');
+        const enableCompareEl = document.getElementById('enableCompare');
+        const autoRouteEl = document.getElementById('autoRoute');
 
-        Object.keys(settings).forEach(key => {
-            localStorage.setItem(key, settings[key]);
-        });
+        if (autoSummarizeEl) localStorage.setItem('autoSummarize', autoSummarizeEl.checked);
+        if (autoExtractItemsEl) localStorage.setItem('autoExtractItems', autoExtractItemsEl.checked);
+        if (autoTagsEl) localStorage.setItem('autoTags', autoTagsEl.checked);
+        if (enableExportsEl) localStorage.setItem('enableExports', enableExportsEl.checked);
+        if (enableBatchModeEl) localStorage.setItem('enableBatchMode', enableBatchModeEl.checked);
+        if (enableCompareEl) localStorage.setItem('enableCompare', enableCompareEl.checked);
+        if (autoRouteEl) localStorage.setItem('autoRoute', autoRouteEl.checked);
     },
 
     saveVoiceSettings() {
-        const voiceSettings = {
-            voiceInputLang: document.getElementById('voiceInputLang').value,
-            voiceOutputLang: document.getElementById('voiceOutputLang').value,
-            voiceSpeed: document.getElementById('voiceSpeed').value,
-            autoPlayVoice: document.getElementById('autoPlayVoice').checked,
-            googleTtsKey: document.getElementById('googleTtsKey').value,
-        };
-
-        Object.keys(voiceSettings).forEach(key => {
-            localStorage.setItem(key, voiceSettings[key]);
-        });
+        const voiceInputLangEl = document.getElementById('voiceInputLang');
+        const voiceOutputLangEl = document.getElementById('voiceOutputLang');
+        const voiceSpeedEl = document.getElementById('voiceSpeed');
+        const autoPlayVoiceEl = document.getElementById('autoPlayVoice');
+        const googleTtsKeyEl = document.getElementById('googleTtsKey');
+        
+        if (voiceInputLangEl) localStorage.setItem('voiceInputLang', voiceInputLangEl.value);
+        if (voiceOutputLangEl) localStorage.setItem('voiceOutputLang', voiceOutputLangEl.value);
+        if (voiceSpeedEl) localStorage.setItem('voiceSpeed', voiceSpeedEl.value);
+        if (autoPlayVoiceEl) localStorage.setItem('autoPlayVoice', autoPlayVoiceEl.checked);
+        if (googleTtsKeyEl) localStorage.setItem('googleTtsKey', googleTtsKeyEl.value);
     },
 
     saveBrandingSettings() {
-        const brandingSettings = {
-            brandName: document.getElementById('brandName').value,
-            brandColor: document.getElementById('brandColor').value,
-            theme: document.querySelector('input[name="theme"]:checked').value,
-        };
+        const brandNameEl = document.getElementById('brandName');
+        const brandColorEl = document.getElementById('brandColor');
+        const themeEl = document.querySelector('input[name="theme"]:checked');
 
-        Object.keys(brandingSettings).forEach(key => {
-            localStorage.setItem(key, brandingSettings[key]);
-        });
+        if (brandNameEl) localStorage.setItem('brandName', brandNameEl.value);
+        if (brandColorEl) localStorage.setItem('brandColor', brandColorEl.value);
+        if (themeEl) localStorage.setItem('theme', themeEl.value);
     }
 };
 
