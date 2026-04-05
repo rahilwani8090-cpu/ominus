@@ -1,0 +1,251 @@
+version: '3.8'
+
+services:
+  # OMNIUS Application - Production-Grade AI Assistant
+  omnius:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: omnius-app
+    ports:
+      - "3000:3000"  # Web interface & WebSocket
+      - "9090:9090"  # Prometheus metrics
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      
+      # Redis configuration
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      
+      # Database (PostgreSQL)
+      - DB_TYPE=postgresql
+      - DATABASE_URL=postgresql://omnius:securepassword@postgres:5432/omnius
+      
+      # Offline AI (Ollama - primary)
+      - OLLAMA_ENABLED=true
+      - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama2
+      
+      # Optional Online APIs (leave blank if not using)
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      
+      # Email configuration
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      
+      # Features
+      - ENABLE_SELF_LEARNING=true
+      - ENABLE_BROWSER_AUTOMATION=true
+      - ENABLE_CONTEXT_MEMORY=true
+      - ENABLE_WORKFLOW_VERSIONING=true
+      - ENABLE_AB_TESTING=true
+      
+      # Security
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-32-byte-key-change-me-prod}
+      
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    
+    networks:
+      - omnius-network
+    
+    volumes:
+      - ./server:/app/server
+      - ./client:/app/client
+    
+    restart: unless-stopped
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  # Redis - Job Queue, Caching, Session Storage
+  redis:
+    image: redis:7-alpine
+    container_name: omnius-redis
+    ports:
+      - "6379:6379"
+    
+    volumes:
+      - redis-data:/data
+    
+    networks:
+      - omnius-network
+    
+    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru --requirepass ${REDIS_PASSWORD:-redispassword}
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    
+    restart: unless-stopped
+
+  # PostgreSQL - Production Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: omnius-postgres
+    ports:
+      - "5432:5432"
+    
+    environment:
+      - POSTGRES_USER=omnius
+      - POSTGRES_PASSWORD=securepassword
+      - POSTGRES_DB=omnius
+    
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    
+    networks:
+      - omnius-network
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U omnius"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+    restart: unless-stopped
+    
+    # Performance tuning
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=1GB"
+      - "-c"
+      - "work_mem=64MB"
+      - "-c"
+      - "maintenance_work_mem=64MB"
+
+  # Ollama - Offline LLM Server (No API costs, Privacy-first)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: omnius-ollama
+    ports:
+      - "11434:11434"
+    
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    
+    volumes:
+      - ollama-data:/root/.ollama
+    
+    networks:
+      - omnius-network
+    
+    restart: unless-stopped
+    
+    # GPU support (optional - uncomment if you have NVIDIA GPU)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+
+  # Prometheus - Metrics Collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: omnius-prometheus
+    ports:
+      - "9090:9090"
+    
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    
+    networks:
+      - omnius-network
+    
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+    
+    restart: unless-stopped
+
+  # Grafana - Visualization & Dashboards
+  grafana:
+    image: grafana/grafana:latest
+    container_name: omnius-grafana
+    ports:
+      - "3001:3000"
+    
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=redis-datasource
+    
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-provisioning:/etc/grafana/provisioning
+    
+    networks:
+      - omnius-network
+    
+    depends_on:
+      - prometheus
+    
+    restart: unless-stopped
+
+  # Optional: Nginx Reverse Proxy (for production)
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: omnius-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #     - ./ssl:/etc/nginx/ssl
+  #   networks:
+  #     - omnius-network
+  #   depends_on:
+  #     - omnius
+
+volumes:
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local
+  ollama-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  omnius-network:
+    driver: bridge
