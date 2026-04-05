@@ -758,15 +758,25 @@ const App = {
         };
         
         this.endpoints = {
-            groq: document.getElementById('groqEndpoint').value.trim() || 'https://api.groq.com/openai/v1/chat/completions',
-            gemini: document.getElementById('geminiEndpoint').value.trim() || 'https://generativelanguage.googleapis.com/v1beta/models',
-            openai: document.getElementById('openaiEndpoint').value.trim() || 'https://api.openai.com/v1/chat/completions',
-            anthropic: document.getElementById('anthropicEndpoint').value.trim() || 'https://api.anthropic.com/v1/messages',
-            xai: document.getElementById('xaiEndpoint').value.trim() || 'https://api.x.ai/v1/chat/completions',
+            groq: document.getElementById('groqEndpoint')?.value?.trim() || 'https://api.groq.com/openai/v1/chat/completions',
+            gemini: document.getElementById('geminiEndpoint')?.value?.trim() || 'https://generativelanguage.googleapis.com/v1beta/models',
+            openai: document.getElementById('openaiEndpoint')?.value?.trim() || 'https://api.openai.com/v1/chat/completions',
+            anthropic: document.getElementById('anthropicEndpoint')?.value?.trim() || 'https://api.anthropic.com/v1/messages',
+            xai: document.getElementById('xaiEndpoint')?.value?.trim() || 'https://api.x.ai/v1/chat/completions',
         };
+        
+        // Save voice settings
+        this.saveVoiceSettings();
+        
+        // Save automation settings
+        this.saveAutomationSettings();
+        
+        // Save branding settings
+        this.saveBrandingSettings();
         
         this.saveApiKeys();
         this.closeSettingsModal();
+        alert('Settings saved successfully!');
     },
 
     renderCustomModelsList() {
@@ -877,6 +887,65 @@ const App = {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    },
+
+    // ============ AUTOMATION METHODS ============
+    
+    async sendAutomationMessage(message, actionType = 'general') {
+        return new Promise((resolve) => {
+            let fullResponse = '';
+            this.streamMessage(message, this.currentModel, (chunk) => {
+                if (chunk.type === 'content') {
+                    fullResponse += chunk.content;
+                } else if (chunk.type === 'done') {
+                    resolve(fullResponse);
+                } else if (chunk.type === 'error') {
+                    resolve(`Error: ${chunk.content}`);
+                }
+            });
+        });
+    },
+
+    saveAutomationSettings() {
+        const settings = {
+            autoSummarize: document.getElementById('autoSummarize').checked,
+            autoExtractItems: document.getElementById('autoExtractItems').checked,
+            autoTags: document.getElementById('autoTags').checked,
+            enableExports: document.getElementById('enableExports').checked,
+            enableBatchMode: document.getElementById('enableBatchMode').checked,
+            enableCompare: document.getElementById('enableCompare').checked,
+            autoRoute: document.getElementById('autoRoute').checked,
+        };
+
+        Object.keys(settings).forEach(key => {
+            localStorage.setItem(key, settings[key]);
+        });
+    },
+
+    saveVoiceSettings() {
+        const voiceSettings = {
+            voiceInputLang: document.getElementById('voiceInputLang').value,
+            voiceOutputLang: document.getElementById('voiceOutputLang').value,
+            voiceSpeed: document.getElementById('voiceSpeed').value,
+            autoPlayVoice: document.getElementById('autoPlayVoice').checked,
+            googleTtsKey: document.getElementById('googleTtsKey').value,
+        };
+
+        Object.keys(voiceSettings).forEach(key => {
+            localStorage.setItem(key, voiceSettings[key]);
+        });
+    },
+
+    saveBrandingSettings() {
+        const brandingSettings = {
+            brandName: document.getElementById('brandName').value,
+            brandColor: document.getElementById('brandColor').value,
+            theme: document.querySelector('input[name="theme"]:checked').value,
+        };
+
+        Object.keys(brandingSettings).forEach(key => {
+            localStorage.setItem(key, brandingSettings[key]);
+        });
     }
 };
 

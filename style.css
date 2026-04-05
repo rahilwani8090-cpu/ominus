@@ -444,6 +444,218 @@ html, body {
 
 .attach-btn:hover { color: var(--text-primary); background: var(--bg-hover); }
 
+.voice-btn, .voice-output-btn, .automation-btn {
+    padding: 8px;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.voice-btn:hover, .voice-output-btn:hover, .automation-btn:hover { 
+    color: var(--text-primary); 
+    background: var(--bg-hover); 
+}
+
+.voice-btn.active {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.voice-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #ef4444;
+}
+
+.voice-waveform {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+}
+
+.voice-waveform span {
+    width: 3px;
+    height: 12px;
+    background: #ef4444;
+    border-radius: 2px;
+    animation: waveform 0.6s infinite ease-in-out;
+}
+
+.voice-waveform span:nth-child(1) { animation-delay: 0s; }
+.voice-waveform span:nth-child(2) { animation-delay: 0.1s; }
+.voice-waveform span:nth-child(3) { animation-delay: 0.2s; }
+.voice-waveform span:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes waveform {
+    0%, 100% { transform: scaleY(0.4); }
+    50% { transform: scaleY(1); }
+}
+
+.automation-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 8px;
+}
+
+.automation-btn:hover { background: var(--bg-hover); border-color: var(--text-tertiary); }
+
+/* Settings Tabs */
+.settings-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.tab-btn.active {
+    color: var(--accent-primary);
+    border-bottom-color: var(--accent-primary);
+}
+
+.tab-btn:hover { color: var(--text-primary); }
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Automation Templates */
+.automation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
+.automation-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.automation-content {
+    padding: 20px;
+}
+
+.automation-templates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.automation-template {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.automation-template:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent-primary);
+}
+
+.template-icon {
+    font-size: 24px;
+}
+
+.template-name {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.template-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Color Picker */
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.color-picker-wrapper input[type="color"] {
+    width: 50px;
+    height: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#brandColorValue {
+    font-family: monospace;
+    color: var(--text-secondary);
+}
+
+/* Upload Buttons */
+.upload-btn {
+    padding: 8px 16px;
+    background: var(--accent-primary);
+    border: none;
+    border-radius: 6px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 13px;
+    transition: var(--transition);
+}
+
+.upload-btn:hover {
+    background: var(--accent-hover);
+}
+
 .message-input {
     flex: 1;
     background: none;
@@ -688,4 +900,337 @@ html, body {
     .sidebar.open { left: 0; }
     .suggestion-cards { grid-template-columns: 1fr; }
     .welcome-title { font-size: 32px; }
+}
+
+/* AI Team Collaboration Styles */
+.team-panel {
+    padding: 12px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 12px;
+}
+
+.team-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.team-header h3 {
+    margin: 0;
+    font-size: 13px;
+}
+
+.team-config-btn {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 14px;
+}
+
+.team-config-btn:hover {
+    color: var(--accent-primary);
+}
+
+.team-members {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.team-member {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.team-member:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-hover);
+}
+
+.member-icon {
+    font-size: 16px;
+}
+
+.member-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.member-role {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    flex: 1;
+    text-align: right;
+}
+
+.team-mode-btn, .debate-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 8px;
+}
+
+.team-mode-btn:hover, .debate-btn:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: #1a1a1a;
+}
+
+.team-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.team-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+#teamStatusText {
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+
+.team-members-inline {
+    display: flex;
+    gap: 6px;
+}
+
+.team-member-badge {
+    font-size: 14px;
+    display: inline-block;
+}
+
+/* Team Discussion Display */
+.message.team-thinking {
+    border-left: 3px solid var(--accent-primary);
+}
+
+.team-discussion-container {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.team-speaker {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.speaker-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.speaker-icon {
+    font-size: 18px;
+}
+
+.speaker-name {
+    color: var(--text-primary);
+}
+
+.speaker-role {
+    color: var(--text-tertiary);
+    font-size: 11px;
+    flex: 1;
+}
+
+.speaker-status {
+    font-size: 11px;
+    color: var(--accent-primary);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+.speaker-content {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.team-consensus {
+    background: rgba(217, 119, 6, 0.1);
+    border-left: 3px solid var(--accent-primary);
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.consensus-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.team-consensus-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.team-analysis {
+    background: var(--bg-tertiary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+/* Team Config Modal */
+.team-config-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
+.team-config-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.team-config-content {
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.team-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.team-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.team-option:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent-primary);
+}
+
+.team-option input[type="checkbox"] {
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+.team-option label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.team-option label span:first-child {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.role-label {
+    font-size: 12px;
+    color: var(--accent-primary);
+    font-weight: 500;
+}
+
+.strengths {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.dynamics-config {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dynamic-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.dynamic-option input[type="radio"] {
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+.dynamic-option label {
+    cursor: pointer;
+    flex: 1;
+}
+
+.dynamic-option label strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.dynamic-option label small {
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.save-team-btn:hover {
+    background: var(--accent-hover);
 }

@@ -38,6 +38,16 @@
             <div class="conversations-list" id="conversationsList">
             </div>
             <div class="sidebar-footer">
+                <button class="automation-btn" id="automationBtn" title="Automation Workflows">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <path d="M12 1v6m0 6v6"></path>
+                        <path d="M4.22 4.22l4.24 4.24m4.24 4.24l4.24 4.24"></path>
+                        <path d="M1 12h6m6 0h6"></path>
+                        <path d="M4.22 19.78l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+                    </svg>
+                    Automate
+                </button>
                 <button class="settings-btn" id="settingsBtn">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3"></circle>
@@ -91,12 +101,25 @@
                                 <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"></path>
                             </svg>
                         </button>
+                        <button class="voice-btn" id="voiceBtn" title="Voice input (English/Hindi)">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"></path>
+                                <path d="M19 10v2a7 7 0 01-14 0v-2m14 0a9 9 0 00-18 0v2"></path>
+                                <line x1="9" y1="19" x2="15" y2="19"></line>
+                            </svg>
+                        </button>
                         <textarea 
                             class="message-input" 
                             id="messageInput" 
-                            placeholder="Message Ominus..."
+                            placeholder="Message Ominus... (or use voice input)"
                             rows="1"
                         ></textarea>
+                        <button class="voice-output-btn" id="voiceOutputBtn" title="Toggle voice output" style="display:none;">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <path d="M15.54 8.46a6.5 6.5 0 010 9.07M18.5 4.34a10 10 0 010 14.07"></path>
+                            </svg>
+                        </button>
                         <button class="send-btn" id="sendBtn" disabled>
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                 <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
@@ -105,6 +128,12 @@
                     </div>
                 </div>
                 <div class="input-footer">
+                    <div class="voice-status" id="voiceStatus" style="display:none;">
+                        <span id="voiceStatusText">Listening...</span>
+                        <div class="voice-waveform">
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
                     <span class="disclaimer">Ominus AI can make mistakes. Please verify important information.</span>
                 </div>
             </div>
@@ -141,83 +170,272 @@
                     </svg>
                 </button>
             </div>
+            <div class="settings-tabs">
+                <button class="tab-btn active" data-tab="api">🔑 API Keys</button>
+                <button class="tab-btn" data-tab="voice">🎤 Voice</button>
+                <button class="tab-btn" data-tab="automation">⚙️ Automation</button>
+                <button class="tab-btn" data-tab="branding">🎨 Branding</button>
+            </div>
             <div class="settings-content" style="max-height: 70vh; overflow-y: auto;">
-                <!-- Groq (Pre-configured) -->
-                <div class="setting-section">
-                    <h4>🔥 Groq (Default - Pre-configured)</h4>
-                    <div class="setting-item">
-                        <label for="groqKey">Groq API Key</label>
-                        <input type="password" id="groqKey" placeholder="Pre-configured - change if needed">
-                        <span class="setting-hint">Get from <a href="https://console.groq.com/keys" target="_blank">Groq Console</a> | Default works out-of-box</span>
+                <!-- API Keys Tab -->
+                <div id="api-tab" class="tab-content active">
+                    <!-- Groq (Pre-configured) -->
+                    <div class="setting-section">
+                        <h4>🔥 Groq (Default - Pre-configured)</h4>
+                        <div class="setting-item">
+                            <label for="groqKey">Groq API Key</label>
+                            <input type="password" id="groqKey" placeholder="Pre-configured - change if needed">
+                            <span class="setting-hint">Get from <a href="https://console.groq.com/keys" target="_blank">Groq Console</a> | Default works out-of-box</span>
+                        </div>
+                    </div>
+
+                    <!-- Gemini -->
+                    <div class="setting-section">
+                        <h4>🔥 Google Gemini</h4>
+                        <div class="setting-item">
+                            <label for="geminiKey">Gemini API Key</label>
+                            <input type="password" id="geminiKey" placeholder="Enter your Gemini API key">
+                            <span class="setting-hint">Get from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></span>
+                        </div>
+                    </div>
+
+                    <!-- OpenAI -->
+                    <div class="setting-section">
+                        <h4>🎯 OpenAI</h4>
+                        <div class="setting-item">
+                            <label for="openaiKey">OpenAI API Key</label>
+                            <input type="password" id="openaiKey" placeholder="Enter your OpenAI API key">
+                            <span class="setting-hint">Get from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></span>
+                        </div>
+                    </div>
+
+                    <!-- Anthropic -->
+                    <div class="setting-section">
+                        <h4>🎭 Anthropic Claude</h4>
+                        <div class="setting-item">
+                            <label for="anthropicKey">Anthropic API Key</label>
+                            <input type="password" id="anthropicKey" placeholder="Enter your Anthropic API key">
+                            <span class="setting-hint">Get from <a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic Console</a></span>
+                        </div>
+                    </div>
+
+                    <!-- xAI -->
+                    <div class="setting-section">
+                        <h4>🚀 xAI Grok</h4>
+                        <div class="setting-item">
+                            <label for="xaiKey">xAI API Key</label>
+                            <input type="password" id="xaiKey" placeholder="Enter your xAI API key">
+                            <span class="setting-hint">Get from <a href="https://console.x.ai" target="_blank">xAI Console</a></span>
+                        </div>
+                    </div>
+
+                    <!-- Custom Models -->
+                    <div class="setting-section">
+                        <h4>⚙️ Custom Models</h4>
+                        <div id="customModelsList"></div>
+                        <div class="add-custom-model">
+                            <input type="text" id="customModelId" placeholder="Model ID (e.g., gpt-5)">
+                            <input type="text" id="customModelName" placeholder="Display Name">
+                            <select id="customModelProvider">
+                                <option value="groq">Groq</option>
+                                <option value="openai">OpenAI</option>
+                                <option value="gemini">Gemini</option>
+                                <option value="anthropic">Anthropic</option>
+                                <option value="xai">xAI</option>
+                            </select>
+                            <input type="text" id="customModelIcon" placeholder="Icon emoji (e.g., 🤖)">
+                            <input type="text" id="customModelDesc" placeholder="Description">
+                            <button id="addCustomModel">Add Model</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Gemini -->
-                <div class="setting-section">
-                    <h4>🔥 Google Gemini</h4>
-                    <div class="setting-item">
-                        <label for="geminiKey">Gemini API Key</label>
-                        <input type="password" id="geminiKey" placeholder="Enter your Gemini API key">
-                        <span class="setting-hint">Get from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></span>
+                <!-- Voice Tab -->
+                <div id="voice-tab" class="tab-content">
+                    <div class="setting-section">
+                        <h4>🎤 Voice Input Settings</h4>
+                        <div class="setting-item">
+                            <label for="voiceInputLang">Voice Input Language</label>
+                            <select id="voiceInputLang">
+                                <option value="en-US">English (US)</option>
+                                <option value="en-GB">English (UK)</option>
+                                <option value="hi-IN">हिंदी (Hindi)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="voiceAutoSend"> Auto-send after 2 seconds of silence</label>
+                        </div>
+                    </div>
+
+                    <div class="setting-section">
+                        <h4>🔊 Voice Output Settings</h4>
+                        <div class="setting-item">
+                            <label for="voiceOutputLang">Response Voice Language</label>
+                            <select id="voiceOutputLang">
+                                <option value="en-US">English (US - Natural)</option>
+                                <option value="en-GB">English (UK - Natural)</option>
+                                <option value="en-IN">English (Indian - Natural)</option>
+                                <option value="hi-IN">हिंदी (Hindi - Natural)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="voiceSpeed">Voice Speed</label>
+                            <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.1" value="1">
+                            <span id="voiceSpeedValue">1x</span>
+                        </div>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="autoPlayVoice"> Auto-play voice responses</label>
+                        </div>
+                    </div>
+
+                    <div class="setting-section">
+                        <h4>🎙️ Voice Engine</h4>
+                        <p class="setting-hint">Uses Google Cloud Text-to-Speech API for natural human voices (requires API key)</p>
+                        <div class="setting-item">
+                            <label for="googleTtsKey">Google TTS API Key (Optional)</label>
+                            <input type="password" id="googleTtsKey" placeholder="For premium human voices">
+                            <span class="setting-hint">Get from <a href="https://cloud.google.com/text-to-speech" target="_blank">Google Cloud Console</a></span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- OpenAI -->
-                <div class="setting-section">
-                    <h4>🎯 OpenAI</h4>
-                    <div class="setting-item">
-                        <label for="openaiKey">OpenAI API Key</label>
-                        <input type="password" id="openaiKey" placeholder="Enter your OpenAI API key">
-                        <span class="setting-hint">Get from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></span>
+                <!-- Automation Tab -->
+                <div id="automation-tab" class="tab-content">
+                    <div class="setting-section">
+                        <h4>⚡ Automation Features</h4>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="autoSummarize" checked> Auto-summarize conversations</label>
+                        </div>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="autoExtractItems" checked> Extract action items automatically</label>
+                        </div>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="autoTags" checked> Auto-tag conversations</label>
+                        </div>
+                    </div>
+
+                    <div class="setting-section">
+                        <h4>📋 Export & Generate</h4>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="enableExports" checked> Enable export features (Blog, Email, PDF)</label>
+                        </div>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="enableBatchMode" checked> Enable batch processing</label>
+                        </div>
+                    </div>
+
+                    <div class="setting-section">
+                        <h4>🤖 Model Orchestration</h4>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="enableCompare"> Compare responses from multiple models</label>
+                        </div>
+                        <div class="setting-item">
+                            <label><input type="checkbox" id="autoRoute"> Auto-select best model by task type</label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Anthropic -->
-                <div class="setting-section">
-                    <h4>🎭 Anthropic Claude</h4>
-                    <div class="setting-item">
-                        <label for="anthropicKey">Anthropic API Key</label>
-                        <input type="password" id="anthropicKey" placeholder="Enter your Anthropic API key">
-                        <span class="setting-hint">Get from <a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic Console</a></span>
+                <!-- Branding Tab -->
+                <div id="branding-tab" class="tab-content">
+                    <div class="setting-section">
+                        <h4>🎨 Brand Customization</h4>
+                        <div class="setting-item">
+                            <label for="brandName">Brand Name</label>
+                            <input type="text" id="brandName" placeholder="E.g., Company AI Assistant" value="Ominus">
+                        </div>
+                        <div class="setting-item">
+                            <label for="brandColor">Primary Brand Color</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="brandColor" value="#d97706">
+                                <span id="brandColorValue">#d97706</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section">
+                        <h4>🖼️ Logo & Media</h4>
+                        <div class="setting-item">
+                            <label>Logo (Optional)</label>
+                            <button class="upload-btn" id="uploadLogo">Upload Logo</button>
+                            <div id="logoPreview"></div>
+                            <input type="file" id="logoInput" accept="image/*" style="display:none;">
+                        </div>
+                        <div class="setting-item">
+                            <label>Favicon (Optional)</label>
+                            <button class="upload-btn" id="uploadFavicon">Upload Favicon</button>
+                            <div id="faviconPreview"></div>
+                            <input type="file" id="faviconInput" accept="image/*" style="display:none;">
+                        </div>
+                    </div>
+
+                    <div class="setting-section">
+                        <h4>🌐 Theme</h4>
+                        <div class="setting-item">
+                            <label><input type="radio" name="theme" value="dark" checked> Dark Theme</label>
+                            <label><input type="radio" name="theme" value="light"> Light Theme</label>
+                            <label><input type="radio" name="theme" value="auto"> Auto (System)</label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- xAI -->
-                <div class="setting-section">
-                    <h4>🚀 xAI Grok</h4>
-                    <div class="setting-item">
-                        <label for="xaiKey">xAI API Key</label>
-                        <input type="password" id="xaiKey" placeholder="Enter your xAI API key">
-                        <span class="setting-hint">Get from <a href="https://console.x.ai" target="_blank">xAI Console</a></span>
-                    </div>
-                </div>
+                <button class="save-settings-btn" id="saveSettings">Save All Settings</button>
+            </div>
+        </div>
+    </div>
 
-                <!-- Custom Models -->
-                <div class="setting-section">
-                    <h4>⚙️ Custom Models</h4>
-                    <div id="customModelsList"></div>
-                    <div class="add-custom-model">
-                        <input type="text" id="customModelId" placeholder="Model ID (e.g., gpt-5)">
-                        <input type="text" id="customModelName" placeholder="Display Name">
-                        <select id="customModelProvider">
-                            <option value="groq">Groq</option>
-                            <option value="openai">OpenAI</option>
-                            <option value="gemini">Gemini</option>
-                            <option value="anthropic">Anthropic</option>
-                            <option value="xai">xAI</option>
-                        </select>
-                        <input type="text" id="customModelIcon" placeholder="Icon emoji (e.g., 🤖)">
-                        <input type="text" id="customModelDesc" placeholder="Description">
-                        <button id="addCustomModel">Add Model</button>
-                    </div>
+    <!-- Automation Workflows Modal -->
+    <div class="automation-modal" id="automationModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>🚀 Automation Workflows</h3>
+                <button class="close-modal" id="closeAutomationModal">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="automation-content">
+                <div class="automation-templates">
+                    <button class="automation-template" data-action="summarize">
+                        <div class="template-icon">📝</div>
+                        <div class="template-name">Auto-Summarize</div>
+                        <div class="template-desc">Generate executive summary</div>
+                    </button>
+                    <button class="automation-template" data-action="extract-items">
+                        <div class="template-icon">✅</div>
+                        <div class="template-name">Extract Tasks</div>
+                        <div class="template-desc">Pull action items</div>
+                    </button>
+                    <button class="automation-template" data-action="blog">
+                        <div class="template-icon">📄</div>
+                        <div class="template-name">Blog Post</div>
+                        <div class="template-desc">Convert to article</div>
+                    </button>
+                    <button class="automation-template" data-action="email">
+                        <div class="template-icon">✉️</div>
+                        <div class="template-name">Email Template</div>
+                        <div class="template-desc">Professional email</div>
+                    </button>
+                    <button class="automation-template" data-action="social">
+                        <div class="template-icon">📱</div>
+                        <div class="template-name">Social Media</div>
+                        <div class="template-desc">Multi-platform posts</div>
+                    </button>
+                    <button class="automation-template" data-action="compare">
+                        <div class="template-icon">⚖️</div>
+                        <div class="template-name">Compare Models</div>
+                        <div class="template-desc">Get multiple responses</div>
+                    </button>
                 </div>
-
-                <button class="save-settings-btn" id="saveSettings">Save Settings</button>
             </div>
         </div>
     </div>
 
     <input type="file" id="fileInput" multiple style="display: none;">
+    <script src="voice-automation.js"></script>
+    <script src="ai-team.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
