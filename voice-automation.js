@@ -422,7 +422,10 @@ const BrandingModule = {
     setupTabSwitching() {
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const tabName = e.target.dataset.tab;
+                const tabBtn = e.currentTarget; // Use currentTarget instead of target
+                const tabName = tabBtn.dataset.tab;
+                
+                if (!tabName) return; // Safety check
                 
                 // Hide all tabs
                 document.querySelectorAll('.tab-content').forEach(tab => {
@@ -435,8 +438,11 @@ const BrandingModule = {
                 });
                 
                 // Show selected tab
-                document.getElementById(`${tabName}-tab`).classList.add('active');
-                e.target.classList.add('active');
+                const tabContent = document.getElementById(`${tabName}-tab`);
+                if (tabContent) {
+                    tabContent.classList.add('active');
+                    tabBtn.classList.add('active');
+                }
             });
         });
     },

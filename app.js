@@ -722,7 +722,7 @@ const App = {
     },
 
     closeAllModals() {
-        document.querySelectorAll('.model-modal, .settings-modal').forEach(el => {
+        document.querySelectorAll('.model-modal, .settings-modal, .automation-modal').forEach(el => {
             el.classList.remove('active');
         });
     },
@@ -734,11 +734,15 @@ const App = {
         document.getElementById('anthropicKey').value = this.apiKeys.anthropic;
         document.getElementById('xaiKey').value = this.apiKeys.xai;
         
-        document.getElementById('groqEndpoint').value = this.endpoints.groq;
-        document.getElementById('geminiEndpoint').value = this.endpoints.gemini;
-        document.getElementById('openaiEndpoint').value = this.endpoints.openai;
-        document.getElementById('anthropicEndpoint').value = this.endpoints.anthropic;
-        document.getElementById('xaiEndpoint').value = this.endpoints.xai;
+        // Safe check for endpoint fields (they may not exist)
+        const endpointIds = ['groqEndpoint', 'geminiEndpoint', 'openaiEndpoint', 'anthropicEndpoint', 'xaiEndpoint'];
+        endpointIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                const endpointKey = id.replace('Endpoint', '').toLowerCase();
+                el.value = this.endpoints[endpointKey] || '';
+            }
+        });
         
         this.renderCustomModelsList();
         document.getElementById('settingsModal').classList.add('active');
