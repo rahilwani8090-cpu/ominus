@@ -1,16 +1,19 @@
 const App = {
     currentConversationId: null,
-    currentModel: 'gemini-2.0-flash',
+    currentModel: 'gemini-2.5-flash',
     conversations: [],
     attachments: [],
     models: [
-        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', provider: 'Google', icon: '⚡', desc: 'Fast and versatile' },
-        { id: 'gemini-2.0-flash-thinking-exp', name: 'Gemini 2.0 Flash Thinking', provider: 'Google', icon: '💭', desc: 'Experimental thinking' },
-        { id: 'gemini-2.0-pro-exp', name: 'Gemini 2.0 Pro', provider: 'Google', icon: '🧠', desc: 'Advanced reasoning' },
-        { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', provider: 'Groq', icon: '🦙', desc: 'Powerful open source' },
-        { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', provider: 'Groq', icon: '🦙', desc: 'Fast & efficient' },
-        { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B', provider: 'Groq', icon: '🔄', desc: 'Mixture of experts' },
-        { id: 'gemma-2-9b-it', name: 'Gemma 2 9B', provider: 'Groq', icon: '💎', desc: "Google's efficient model" },
+        { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', provider: 'Google', icon: '⚡', desc: 'Latest fast & versatile' },
+        { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite', provider: 'Google', icon: '�', desc: 'Ultra-fast lightweight' },
+        { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'Google', icon: '🧠', desc: 'Advanced reasoning' },
+        { id: 'gemini-3.1-flash', name: 'Gemini 3.1 Flash', provider: 'Google', icon: '🔥', desc: 'Next-gen performance' },
+        { id: 'meta-llama/llama-4-scout-17b-16e-instruct', name: 'Llama 4 Scout', provider: 'Groq', icon: '🦙', desc: 'Llama 4 - 17B params' },
+        { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', provider: 'Groq', icon: '🤖', desc: 'OpenAI OSS 120B' },
+        { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B', provider: 'Groq', icon: '💡', desc: 'OpenAI OSS 20B' },
+        { id: 'qwen/qwen3-32b', name: 'Qwen3 32B', provider: 'Groq', icon: '🔮', desc: 'Alibaba Qwen3' },
+        { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', provider: 'Groq', icon: '�', desc: 'Powerful open source' },
+        { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', provider: 'Groq', icon: '⚡', desc: 'Fast & efficient' },
     ],
 
     init() {

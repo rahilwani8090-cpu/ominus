@@ -90,7 +90,7 @@ async fn create_conversation(
         messages: vec![],
         created_at: Utc::now(),
         updated_at: Utc::now(),
-        model: "gemini-2.0-flash".to_string(),
+        model: "gemini-2.5-flash".to_string(),
     };
     state.conversations.insert(id, conversation.clone());
     Json(conversation)
@@ -176,7 +176,7 @@ async fn handle_socket(socket: axum::extract::ws::WebSocket, state: AppState, _c
             };
 
             let message = request.get("message").and_then(|v| v.as_str()).unwrap_or("");
-            let model = request.get("model").and_then(|v| v.as_str()).unwrap_or("gemini-2.0-flash");
+            let model = request.get("model").and_then(|v| v.as_str()).unwrap_or("gemini-2.5-flash");
 
             if model.starts_with("gemini") {
                 let _ = state.gemini_client.stream_message(
