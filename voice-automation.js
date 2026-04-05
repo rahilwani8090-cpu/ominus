@@ -18,23 +18,36 @@ const VoiceModule = {
             this.setupRecognitionListeners();
         }
 
-        // Bind UI Events
-        document.getElementById('voiceBtn').addEventListener('click', () => this.toggleVoiceInput());
-        document.getElementById('voiceOutputBtn').addEventListener('click', () => this.toggleVoiceOutput());
+        // Bind UI Events - with safety checks
+        const voiceBtn = document.getElementById('voiceBtn');
+        if (voiceBtn) voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
         
-        // Voice Settings
-        document.getElementById('voiceInputLang').addEventListener('change', (e) => {
-            this.currentLanguage = e.target.value;
-        });
+        const voiceOutputBtn = document.getElementById('voiceOutputBtn');
+        if (voiceOutputBtn) voiceOutputBtn.addEventListener('click', () => this.toggleVoiceOutput());
         
-        document.getElementById('voiceSpeed').addEventListener('input', (e) => {
-            this.voiceSpeed = parseFloat(e.target.value);
-            document.getElementById('voiceSpeedValue').textContent = this.voiceSpeed + 'x';
-        });
+        // Voice Settings - with safety checks
+        const voiceInputLang = document.getElementById('voiceInputLang');
+        if (voiceInputLang) {
+            voiceInputLang.addEventListener('change', (e) => {
+                this.currentLanguage = e.target.value;
+            });
+        }
+        
+        const voiceSpeed = document.getElementById('voiceSpeed');
+        if (voiceSpeed) {
+            voiceSpeed.addEventListener('input', (e) => {
+                this.voiceSpeed = parseFloat(e.target.value);
+                const speedValue = document.getElementById('voiceSpeedValue');
+                if (speedValue) speedValue.textContent = this.voiceSpeed + 'x';
+            });
+        }
 
-        document.getElementById('autoPlayVoice').addEventListener('change', (e) => {
-            this.autoPlayVoice = e.target.checked;
-        });
+        const autoPlayVoice = document.getElementById('autoPlayVoice');
+        if (autoPlayVoice) {
+            autoPlayVoice.addEventListener('change', (e) => {
+                this.autoPlayVoice = e.target.checked;
+            });
+        }
 
         // Load saved settings
         this.loadVoiceSettings();
@@ -45,9 +58,14 @@ const VoiceModule = {
         const speed = parseFloat(localStorage.getItem('voiceSpeed') || '1');
         const autoPlay = localStorage.getItem('autoPlayVoice') === 'true';
         
-        document.getElementById('voiceInputLang').value = lang;
-        document.getElementById('voiceSpeed').value = speed;
-        document.getElementById('autoPlayVoice').checked = autoPlay;
+        const voiceInputLang = document.getElementById('voiceInputLang');
+        if (voiceInputLang) voiceInputLang.value = lang;
+        
+        const voiceSpeed = document.getElementById('voiceSpeed');
+        if (voiceSpeed) voiceSpeed.value = speed;
+        
+        const autoPlayVoice = document.getElementById('autoPlayVoice');
+        if (autoPlayVoice) autoPlayVoice.checked = autoPlay;
         
         this.currentLanguage = lang;
         this.voiceSpeed = speed;
@@ -211,8 +229,15 @@ const AutomationModule = {
     workflows: [],
 
     init() {
-        document.getElementById('automationBtn').addEventListener('click', () => this.openAutomationModal());
-        document.getElementById('closeAutomationModal').addEventListener('click', () => this.closeAutomationModal());
+        const automationBtn = document.getElementById('automationBtn');
+        if (automationBtn) {
+            automationBtn.addEventListener('click', () => this.openAutomationModal());
+        }
+        
+        const closeAutomationModal = document.getElementById('closeAutomationModal');
+        if (closeAutomationModal) {
+            closeAutomationModal.addEventListener('click', () => this.closeAutomationModal());
+        }
         
         document.querySelectorAll('.automation-template').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -225,13 +250,22 @@ const AutomationModule = {
     },
 
     loadAutomationSettings() {
-        document.getElementById('autoSummarize').checked = localStorage.getItem('autoSummarize') !== 'false';
-        document.getElementById('autoExtractItems').checked = localStorage.getItem('autoExtractItems') !== 'false';
-        document.getElementById('autoTags').checked = localStorage.getItem('autoTags') !== 'false';
-        document.getElementById('enableExports').checked = localStorage.getItem('enableExports') !== 'false';
-        document.getElementById('enableBatchMode').checked = localStorage.getItem('enableBatchMode') !== 'false';
-        document.getElementById('enableCompare').checked = localStorage.getItem('enableCompare') !== 'false';
-        document.getElementById('autoRoute').checked = localStorage.getItem('autoRoute') !== 'false';
+        const settings = {
+            autoSummarize: 'autoSummarize',
+            autoExtractItems: 'autoExtractItems',
+            autoTags: 'autoTags',
+            enableExports: 'enableExports',
+            enableBatchMode: 'enableBatchMode',
+            enableCompare: 'enableCompare',
+            autoRoute: 'autoRoute'
+        };
+        
+        Object.entries(settings).forEach(([key, storageKey]) => {
+            const el = document.getElementById(key);
+            if (el) {
+                el.checked = localStorage.getItem(storageKey) !== 'false';
+            }
+        });
     },
 
     openAutomationModal() {
@@ -393,13 +427,19 @@ const BrandingModule = {
         this.loadBrandingSettings();
         this.setupTabSwitching();
         
-        document.getElementById('brandColor').addEventListener('change', (e) => {
-            this.updateBrandColor(e.target.value);
-        });
+        const brandColorEl = document.getElementById('brandColor');
+        if (brandColorEl) {
+            brandColorEl.addEventListener('change', (e) => {
+                this.updateBrandColor(e.target.value);
+            });
+        }
         
-        document.getElementById('brandName').addEventListener('change', (e) => {
-            this.updateBrandName(e.target.value);
-        });
+        const brandNameEl = document.getElementById('brandName');
+        if (brandNameEl) {
+            brandNameEl.addEventListener('change', (e) => {
+                this.updateBrandName(e.target.value);
+            });
+        }
 
         document.querySelectorAll('input[name="theme"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
@@ -407,16 +447,29 @@ const BrandingModule = {
             });
         });
 
-        document.getElementById('uploadLogo').addEventListener('click', () => {
-            document.getElementById('logoInput').click();
-        });
+        const uploadLogoBtn = document.getElementById('uploadLogo');
+        if (uploadLogoBtn) {
+            uploadLogoBtn.addEventListener('click', () => {
+                document.getElementById('logoInput').click();
+            });
+        }
 
-        document.getElementById('uploadFavicon').addEventListener('click', () => {
-            document.getElementById('faviconInput').click();
-        });
+        const uploadFaviconBtn = document.getElementById('uploadFavicon');
+        if (uploadFaviconBtn) {
+            uploadFaviconBtn.addEventListener('click', () => {
+                document.getElementById('faviconInput').click();
+            });
+        }
 
-        document.getElementById('logoInput').addEventListener('change', (e) => this.handleLogoUpload(e));
-        document.getElementById('faviconInput').addEventListener('change', (e) => this.handleFaviconUpload(e));
+        const logoInput = document.getElementById('logoInput');
+        if (logoInput) {
+            logoInput.addEventListener('change', (e) => this.handleLogoUpload(e));
+        }
+        
+        const faviconInput = document.getElementById('faviconInput');
+        if (faviconInput) {
+            faviconInput.addEventListener('change', (e) => this.handleFaviconUpload(e));
+        }
     },
 
     setupTabSwitching() {
@@ -452,9 +505,14 @@ const BrandingModule = {
         const brandColor = localStorage.getItem('brandColor') || '#d97706';
         const theme = localStorage.getItem('theme') || 'dark';
 
-        document.getElementById('brandName').value = brandName;
-        document.getElementById('brandColor').value = brandColor;
-        document.querySelector(`input[name="theme"][value="${theme}"]`).checked = true;
+        const brandNameEl = document.getElementById('brandName');
+        if (brandNameEl) brandNameEl.value = brandName;
+        
+        const brandColorEl = document.getElementById('brandColor');
+        if (brandColorEl) brandColorEl.value = brandColor;
+        
+        const themeEl = document.querySelector(`input[name="theme"][value="${theme}"]`);
+        if (themeEl) themeEl.checked = true;
 
         this.updateBrandName(brandName);
         this.updateBrandColor(brandColor);
