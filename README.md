@@ -64,8 +64,9 @@ python -m http.server 8000
 Visit `http://localhost:8000`
 
 ### 2. Start Chatting
-- Groq is pre-configured - just start typing!
-- Select model from sidebar
+- **✅ Groq is pre-configured** - no API key needed!
+- Just open and start typing immediately
+- Select different models from the sidebar
 - Press Enter to send
 
 ### 3. Try Voice (Optional)
@@ -91,11 +92,13 @@ git clone https://github.com/yourusername/ominus.git
 cd ominus
 ```
 
-### Add API Keys (Optional)
+### Add API Keys (Optional - Groq Pre-Configured!)
 1. Open `index.html` in browser
-2. Click Settings ⚙️
-3. Go to "API Keys" tab
-4. Add your keys (or skip - Groq works free!)
+2. **App works immediately with Groq** - no setup needed!
+3. To add other providers (OpenAI, Gemini, etc.):
+   - Click Settings ⚙️
+   - Go to "API Keys" tab
+   - Add your keys for additional providers
 
 ## Getting API Keys
 

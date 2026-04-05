@@ -5,8 +5,10 @@ const App = {
     conversations: [],
     attachments: [],
     
-    // Default API keys placeholder - users add via Settings UI
-    defaultGroqKey: '',
+    // Default Groq API key - pre-configured for out-of-box usage
+    // Add your Groq API key from https://console.groq.com/keys
+    // Or leave empty and add via Settings UI
+    defaultGroqKey: 'gsk_YOUR_GROQ_API_KEY_HERE',
     
     // Built-in models with all major providers
     builtinModels: [
