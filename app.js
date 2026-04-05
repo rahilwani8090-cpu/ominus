@@ -71,10 +71,12 @@ const App = {
 
     saveApiKeys() {
         Object.keys(this.apiKeys).forEach(key => {
-            localStorage.setItem(`${key}_api_key`, this.apiKeys[key]);
+            const val = this.apiKeys[key] ? this.apiKeys[key].trim() : '';
+            localStorage.setItem(`${key}_api_key`, val);
         });
         Object.keys(this.endpoints).forEach(key => {
-            localStorage.setItem(`${key}_endpoint`, this.endpoints[key]);
+            const val = this.endpoints[key] ? this.endpoints[key].trim() : '';
+            localStorage.setItem(`${key}_endpoint`, val);
         });
     },
 
@@ -183,6 +185,11 @@ const App = {
             })
         });
 
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error?.message || `Gemini API Error: ${response.status}`);
+        }
+
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
 
@@ -244,6 +251,11 @@ const App = {
             })
         });
 
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error?.message || `Anthropic API Error: ${response.status}`);
+        }
+
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
 
@@ -289,6 +301,10 @@ const App = {
     },
 
     async handleStreamResponse(response, onChunk) {
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+        }
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
 
@@ -450,18 +466,25 @@ const App = {
     renderMarkdown(content) {
         if (!content) return '';
         
+        // Escape HTML to prevent XSS before parsing markdown
+        const escapedContent = this.escapeHtml(content);
+        
         marked.setOptions({
             highlight: (code, lang) => {
                 if (lang && hljs.getLanguage(lang)) {
-                    return hljs.highlight(code, { language: lang }).value;
+                    try {
+                        return hljs.highlight(code, { language: lang }).value;
+                    } catch (__) {}
                 }
                 return hljs.highlightAuto(code).value;
             },
             breaks: true,
-            gfm: true
+            gfm: true,
+            headerIds: false,
+            mangle: false
         });
         
-        return marked.parse(content);
+        return marked.parse(escapedContent);
     },
 
     highlightCodeBlocks(container) {
