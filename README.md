@@ -1,16 +1,17 @@
 # Ominus AI
 
-A beautiful, Claude-like AI chat application built with Rust and modern web technologies. Supports both Google Gemini and Groq APIs with real-time streaming responses.
+A beautiful, Claude-like AI chat application with **multi-provider support**. Works as a standalone client-side web app (perfect for GitHub Pages) or with a Rust backend.
 
 ## Features
 
-- 🤖 **Multiple AI Models**: Support for Gemini 2.0 Flash, Gemini 2.0 Pro, Llama 3.3 70B, Mixtral 8x7B, and more
-- ⚡ **Real-time Streaming**: WebSocket-based streaming for instant responses
-- 💬 **Claude-like UI**: Beautiful dark theme interface inspired by Claude
-- 📝 **Markdown Support**: Full markdown rendering with code syntax highlighting
-- 📎 **File Attachments**: Upload and attach files to your conversations
-- 💾 **Conversation History**: Automatic saving and management of chat history
-- 🔒 **Privacy Focused**: Your data stays on your machine
+- 🤖 **Multi-Provider Support**: Groq, Google Gemini, OpenAI, Anthropic Claude, xAI Grok
+- ⚡ **Latest AI Models**: Llama 4, Gemini 2.5/3.1, GPT-4o, Claude 3.5, Grok-2, GPT OSS, Qwen3
+- 💬 **Real-time Streaming**: Instant streaming responses
+- 📝 **Markdown Support**: Full markdown with code syntax highlighting
+- 📎 **File Attachments**: Upload and attach files to conversations
+- 💾 **Conversation History**: Automatic saving to browser localStorage
+- 🔧 **Custom Models**: Add any model via Settings
+- 🔒 **Privacy First**: API keys stored locally, never on servers
 
 ## Tech Stack
 
@@ -81,18 +82,16 @@ ominus/
 └── Cargo.toml
 ```
 
-## Available Models
+## Supported Providers & Models
 
-### Google Gemini
-- `gemini-2.0-flash` - Fast and versatile
-- `gemini-2.0-flash-thinking-exp` - Experimental thinking model
-- `gemini-2.0-pro-exp` - Advanced reasoning and coding
-
-### Groq
-- `llama-3.3-70b-versatile` - Powerful open-source model
-- `llama-3.1-8b-instant` - Fast and efficient
-- `mixtral-8x7b-32768` - Mixture of experts
-- `gemma-2-9b-it` - Google's efficient model
+| Provider | Models |
+|----------|--------|
+| **Groq** | Llama 3.3 70B, Llama 4 Scout, GPT OSS 120B, Qwen3 32B, Mixtral 8x7B, Gemma 2 9B |
+| **Gemini** | 2.5 Flash, 2.5 Flash-Lite, 2.5 Pro, 3.1 Flash |
+| **OpenAI** | GPT-4o, GPT-4o Mini, o1, o3-mini |
+| **Claude** | 3.5 Sonnet, 3 Opus, 3 Haiku |
+| **Grok** | Grok-2, Grok-2 Latest, Grok Beta |
+| **Custom** | Add any model via Settings UI
 
 ## License
 
