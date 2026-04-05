@@ -635,6 +635,18 @@ html, body {
 
 .save-settings-btn:hover { background: var(--accent-hover); }
 
+.setting-section { margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
+.setting-section:last-of-type { border-bottom: none; }
+.setting-section h4 { font-size: 14px; color: var(--accent-primary); margin-bottom: 12px; }
+
+.add-custom-model { display: grid; gap: 8px; margin-top: 12px; }
+.add-custom-model input, .add-custom-model select { padding: 8px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); }
+.add-custom-model button { padding: 8px; background: var(--accent-primary); border: none; border-radius: 6px; color: var(--text-primary); cursor: pointer; }
+.add-custom-model button:hover { background: var(--accent-hover); }
+
+.custom-model-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: var(--bg-tertiary); border-radius: 6px; margin-bottom: 8px; }
+.custom-model-item button { padding: 4px 8px; background: #ef4444; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 12px; }
+
 .code-block { position: relative; margin: 12px 0; }
 
 .code-block-header {

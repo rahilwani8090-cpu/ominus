@@ -1,37 +1,81 @@
+/* Ominus AI - Multi-Provider Chatbot */
 const App = {
     currentConversationId: null,
-    currentModel: 'gemini-2.5-flash',
+    currentModel: 'llama-3.3-70b-versatile',
     conversations: [],
     attachments: [],
-    models: [
-        { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', provider: 'Google', icon: '⚡', desc: 'Latest fast & versatile' },
-        { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite', provider: 'Google', icon: '�', desc: 'Ultra-fast lightweight' },
-        { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'Google', icon: '🧠', desc: 'Advanced reasoning' },
-        { id: 'gemini-3.1-flash', name: 'Gemini 3.1 Flash', provider: 'Google', icon: '🔥', desc: 'Next-gen performance' },
-        { id: 'meta-llama/llama-4-scout-17b-16e-instruct', name: 'Llama 4 Scout', provider: 'Groq', icon: '🦙', desc: 'Llama 4 - 17B params' },
-        { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', provider: 'Groq', icon: '🤖', desc: 'OpenAI OSS 120B' },
-        { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B', provider: 'Groq', icon: '💡', desc: 'OpenAI OSS 20B' },
-        { id: 'qwen/qwen3-32b', name: 'Qwen3 32B', provider: 'Groq', icon: '🔮', desc: 'Alibaba Qwen3' },
-        { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', provider: 'Groq', icon: '�', desc: 'Powerful open source' },
-        { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', provider: 'Groq', icon: '⚡', desc: 'Fast & efficient' },
+    
+    // Default API keys placeholder - users add via Settings UI
+    defaultGroqKey: '',
+    
+    // Built-in models with all major providers
+    builtinModels: [
+        // Groq Models (Default)
+        { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B', provider: 'groq', icon: '🦙', desc: 'Powerful open source' },
+        { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B', provider: 'groq', icon: '⚡', desc: 'Fast & efficient' },
+        { id: 'meta-llama/llama-4-scout-17b-16e-instruct', name: 'Llama 4 Scout', provider: 'groq', icon: '🐪', desc: 'Llama 4 - 17B params' },
+        { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', provider: 'groq', icon: '🤖', desc: 'OpenAI OSS 120B' },
+        { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B', provider: 'groq', icon: '💡', desc: 'OpenAI OSS 20B' },
+        { id: 'qwen/qwen3-32b', name: 'Qwen3 32B', provider: 'groq', icon: '🔮', desc: 'Alibaba Qwen3' },
+        { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B', provider: 'groq', icon: '🔄', desc: 'Mixture of experts' },
+        { id: 'gemma-2-9b-it', name: 'Gemma 2 9B', provider: 'groq', icon: '💎', desc: "Google's efficient model" },
+        // Gemini Models
+        { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', provider: 'gemini', icon: '🔥', desc: 'Latest fast & versatile' },
+        { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite', provider: 'gemini', icon: '🚀', desc: 'Ultra-fast lightweight' },
+        { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'gemini', icon: '🧠', desc: 'Advanced reasoning' },
+        { id: 'gemini-3.1-flash', name: 'Gemini 3.1 Flash', provider: 'gemini', icon: '⚡', desc: 'Next-gen performance' },
+        // OpenAI Models
+        { id: 'gpt-4o', name: 'GPT-4o', provider: 'openai', icon: '🎯', desc: 'OpenAI flagship' },
+        { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'openai', icon: '🔹', desc: 'Fast & affordable' },
+        { id: 'o1', name: 'o1', provider: 'openai', icon: '🧩', desc: 'Reasoning model' },
+        { id: 'o3-mini', name: 'o3-mini', provider: 'openai', icon: '🎲', desc: 'Efficient reasoning' },
+        // Anthropic Models
+        { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', provider: 'anthropic', icon: '🎭', desc: 'Balanced & capable' },
+        { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus', provider: 'anthropic', icon: '🎪', desc: 'Most powerful' },
+        { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku', provider: 'anthropic', icon: '🎨', desc: 'Fast & lightweight' },
+        // xAI Grok Models
+        { id: 'grok-2', name: 'Grok-2', provider: 'xai', icon: '🚀', desc: 'xAI flagship' },
+        { id: 'grok-2-latest', name: 'Grok-2 Latest', provider: 'xai', icon: '🌟', desc: 'Latest Grok' },
+        { id: 'grok-beta', name: 'Grok Beta', provider: 'xai', icon: '⭐', desc: 'Beta version' },
     ],
 
     init() {
         this.loadApiKeys();
-        this.bindEvents();
         this.loadConversations();
+        this.bindEvents();
         this.renderModelList();
         this.updateModelSelector();
     },
 
+    get models() {
+        const custom = JSON.parse(localStorage.getItem('custom_models') || '[]');
+        return [...this.builtinModels, ...custom];
+    },
+
     loadApiKeys() {
-        this.geminiKey = localStorage.getItem('gemini_api_key') || '';
-        this.groqKey = localStorage.getItem('groq_api_key') || '';
+        this.apiKeys = {
+            groq: localStorage.getItem('groq_api_key') || this.defaultGroqKey,
+            gemini: localStorage.getItem('gemini_api_key') || '',
+            openai: localStorage.getItem('openai_api_key') || '',
+            anthropic: localStorage.getItem('anthropic_api_key') || '',
+            xai: localStorage.getItem('xai_api_key') || '',
+        };
+        this.endpoints = {
+            groq: localStorage.getItem('groq_endpoint') || 'https://api.groq.com/openai/v1/chat/completions',
+            gemini: localStorage.getItem('gemini_endpoint') || 'https://generativelanguage.googleapis.com/v1beta/models',
+            openai: localStorage.getItem('openai_endpoint') || 'https://api.openai.com/v1/chat/completions',
+            anthropic: localStorage.getItem('anthropic_endpoint') || 'https://api.anthropic.com/v1/messages',
+            xai: localStorage.getItem('xai_endpoint') || 'https://api.x.ai/v1/chat/completions',
+        };
     },
 
     saveApiKeys() {
-        localStorage.setItem('gemini_api_key', this.geminiKey);
-        localStorage.setItem('groq_api_key', this.groqKey);
+        Object.keys(this.apiKeys).forEach(key => {
+            localStorage.setItem(`${key}_api_key`, this.apiKeys[key]);
+        });
+        Object.keys(this.endpoints).forEach(key => {
+            localStorage.setItem(`${key}_endpoint`, this.endpoints[key]);
+        });
     },
 
     bindEvents() {
@@ -43,10 +87,15 @@ const App = {
         document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileSelect(e));
         document.getElementById('modelSelector').addEventListener('click', () => this.openModelModal());
         document.getElementById('closeModelModal').addEventListener('click', () => this.closeModelModal());
-        document.querySelector('.modal-overlay').addEventListener('click', () => this.closeModelModal());
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if (e.target === el) this.closeAllModals();
+            });
+        });
         document.getElementById('settingsBtn').addEventListener('click', () => this.openSettingsModal());
         document.getElementById('closeSettingsModal').addEventListener('click', () => this.closeSettingsModal());
         document.getElementById('saveSettings').addEventListener('click', () => this.saveSettings());
+        document.getElementById('addCustomModel').addEventListener('click', () => this.addCustomModel());
 
         document.querySelectorAll('.suggestion-card').forEach(card => {
             card.addEventListener('click', () => {
@@ -57,118 +106,213 @@ const App = {
         });
     },
 
-    async streamGemini(message, model, onChunk) {
-        if (!this.geminiKey) {
-            onChunk({ type: 'error', content: 'Please set your Gemini API key in Settings' });
+    async streamMessage(message, model, onChunk) {
+        const modelInfo = this.models.find(m => m.id === model);
+        if (!modelInfo) {
+            onChunk({ type: 'error', content: 'Unknown model selected' });
             return;
         }
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${this.geminiKey}`;
+        const provider = modelInfo.provider;
+        const key = this.apiKeys[provider];
         
-        const body = {
-            contents: [{ role: 'user', parts: [{ text: message }] }],
-            generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
-            safetySettings: [
-                { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-                { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-                { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-                { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
-            ]
-        };
+        if (!key && provider !== 'groq') {
+            onChunk({ type: 'error', content: `Please set your ${provider.toUpperCase()} API key in Settings` });
+            return;
+        }
 
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                const text = decoder.decode(value, { stream: true });
-                const lines = text.split('\n');
-
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        const data = line.slice(6);
-                        if (data !== '[DONE]') {
-                            try {
-                                const parsed = JSON.parse(data);
-                                const content = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-                                if (content) {
-                                    onChunk({ type: 'content', content });
-                                }
-                            } catch (e) {}
-                        }
-                    }
-                }
+            switch (provider) {
+                case 'groq':
+                    await this.streamGroq(message, model, onChunk, key);
+                    break;
+                case 'gemini':
+                    await this.streamGemini(message, model, onChunk, key);
+                    break;
+                case 'openai':
+                    await this.streamOpenAI(message, model, onChunk, key);
+                    break;
+                case 'anthropic':
+                    await this.streamAnthropic(message, model, onChunk, key);
+                    break;
+                case 'xai':
+                    await this.streamXAI(message, model, onChunk, key);
+                    break;
+                default:
+                    onChunk({ type: 'error', content: `Provider ${provider} not supported yet` });
             }
-            onChunk({ type: 'done' });
         } catch (err) {
             onChunk({ type: 'error', content: err.message });
         }
     },
 
-    async streamGroq(message, model, onChunk) {
-        if (!this.groqKey) {
-            onChunk({ type: 'error', content: 'Please set your Groq API key in Settings' });
-            return;
-        }
+    async streamGroq(message, model, onChunk, key) {
+        const response = await fetch(this.endpoints.groq, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${key}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: [{ role: 'user', content: message }],
+                temperature: 0.7,
+                max_tokens: 8192,
+                stream: true
+            })
+        });
 
-        const url = 'https://api.groq.com/openai/v1/chat/completions';
+        await this.handleStreamResponse(response, onChunk);
+    },
+
+    async streamGemini(message, model, onChunk, key) {
+        const url = `${this.endpoints.gemini}/${model}:streamGenerateContent?key=${key}`;
         
-        const body = {
-            model: model,
-            messages: [{ role: 'user', content: message }],
-            temperature: 0.7,
-            max_tokens: 8192,
-            stream: true
-        };
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: message }] }],
+                generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
+                safetySettings: [
+                    { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+                    { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+                    { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+                    { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
+                ]
+            })
+        });
 
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${this.groqKey}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+            const text = decoder.decode(value, { stream: true });
+            const lines = text.split('\n');
 
-                const text = decoder.decode(value, { stream: true });
-                const lines = text.split('\n');
-
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        const data = line.slice(6);
-                        if (data !== '[DONE]') {
-                            try {
-                                const parsed = JSON.parse(data);
-                                const content = parsed.choices?.[0]?.delta?.content;
-                                if (content) {
-                                    onChunk({ type: 'content', content });
-                                }
-                            } catch (e) {}
-                        }
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const data = line.slice(6);
+                    if (data !== '[DONE]') {
+                        try {
+                            const parsed = JSON.parse(data);
+                            const content = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+                            if (content) onChunk({ type: 'content', content });
+                        } catch (e) {}
                     }
                 }
             }
-            onChunk({ type: 'done' });
-        } catch (err) {
-            onChunk({ type: 'error', content: err.message });
         }
+        onChunk({ type: 'done' });
+    },
+
+    async streamOpenAI(message, model, onChunk, key) {
+        const response = await fetch(this.endpoints.openai, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${key}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: [{ role: 'user', content: message }],
+                temperature: 0.7,
+                max_tokens: 4096,
+                stream: true
+            })
+        });
+
+        await this.handleStreamResponse(response, onChunk);
+    },
+
+    async streamAnthropic(message, model, onChunk, key) {
+        const response = await fetch(this.endpoints.anthropic, {
+            method: 'POST',
+            headers: {
+                'x-api-key': key,
+                'anthropic-version': '2023-06-01',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: [{ role: 'user', content: message }],
+                max_tokens: 4096,
+                stream: true
+            })
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const text = decoder.decode(value, { stream: true });
+            const lines = text.split('\n');
+
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const data = line.slice(6);
+                    try {
+                        const parsed = JSON.parse(data);
+                        if (parsed.type === 'content_block_delta') {
+                            const content = parsed.delta?.text;
+                            if (content) onChunk({ type: 'content', content });
+                        }
+                    } catch (e) {}
+                }
+            }
+        }
+        onChunk({ type: 'done' });
+    },
+
+    async streamXAI(message, model, onChunk, key) {
+        const response = await fetch(this.endpoints.xai, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${key}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: [{ role: 'user', content: message }],
+                temperature: 0.7,
+                stream: true
+            })
+        });
+
+        await this.handleStreamResponse(response, onChunk);
+    },
+
+    async handleStreamResponse(response, onChunk) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const text = decoder.decode(value, { stream: true });
+            const lines = text.split('\n');
+
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const data = line.slice(6);
+                    if (data !== '[DONE]') {
+                        try {
+                            const parsed = JSON.parse(data);
+                            const content = parsed.choices?.[0]?.delta?.content;
+                            if (content) onChunk({ type: 'content', content });
+                        } catch (e) {}
+                    }
+                }
+            }
+        }
+        onChunk({ type: 'done' });
     },
 
     createNewChat() {
@@ -479,11 +623,7 @@ const App = {
             }
         };
 
-        if (this.currentModel.startsWith('gemini')) {
-            await this.streamGemini(content, this.currentModel, onChunk);
-        } else {
-            await this.streamGroq(content, this.currentModel, onChunk);
-        }
+        await this.streamMessage(content, this.currentModel, onChunk);
     },
 
     handleInput(e) {
@@ -549,9 +689,26 @@ const App = {
         document.getElementById('modelModal').classList.remove('active');
     },
 
+    closeAllModals() {
+        document.querySelectorAll('.model-modal, .settings-modal').forEach(el => {
+            el.classList.remove('active');
+        });
+    },
+
     openSettingsModal() {
-        document.getElementById('geminiKey').value = this.geminiKey;
-        document.getElementById('groqKey').value = this.groqKey;
+        document.getElementById('groqKey').value = this.apiKeys.groq;
+        document.getElementById('geminiKey').value = this.apiKeys.gemini;
+        document.getElementById('openaiKey').value = this.apiKeys.openai;
+        document.getElementById('anthropicKey').value = this.apiKeys.anthropic;
+        document.getElementById('xaiKey').value = this.apiKeys.xai;
+        
+        document.getElementById('groqEndpoint').value = this.endpoints.groq;
+        document.getElementById('geminiEndpoint').value = this.endpoints.gemini;
+        document.getElementById('openaiEndpoint').value = this.endpoints.openai;
+        document.getElementById('anthropicEndpoint').value = this.endpoints.anthropic;
+        document.getElementById('xaiEndpoint').value = this.endpoints.xai;
+        
+        this.renderCustomModelsList();
         document.getElementById('settingsModal').classList.add('active');
     },
 
@@ -560,27 +717,90 @@ const App = {
     },
 
     saveSettings() {
-        this.geminiKey = document.getElementById('geminiKey').value.trim();
-        this.groqKey = document.getElementById('groqKey').value.trim();
+        this.apiKeys = {
+            groq: document.getElementById('groqKey').value.trim() || this.defaultGroqKey,
+            gemini: document.getElementById('geminiKey').value.trim(),
+            openai: document.getElementById('openaiKey').value.trim(),
+            anthropic: document.getElementById('anthropicKey').value.trim(),
+            xai: document.getElementById('xaiKey').value.trim(),
+        };
+        
+        this.endpoints = {
+            groq: document.getElementById('groqEndpoint').value.trim() || 'https://api.groq.com/openai/v1/chat/completions',
+            gemini: document.getElementById('geminiEndpoint').value.trim() || 'https://generativelanguage.googleapis.com/v1beta/models',
+            openai: document.getElementById('openaiEndpoint').value.trim() || 'https://api.openai.com/v1/chat/completions',
+            anthropic: document.getElementById('anthropicEndpoint').value.trim() || 'https://api.anthropic.com/v1/messages',
+            xai: document.getElementById('xaiEndpoint').value.trim() || 'https://api.x.ai/v1/chat/completions',
+        };
+        
         this.saveApiKeys();
         this.closeSettingsModal();
     },
 
+    renderCustomModelsList() {
+        const container = document.getElementById('customModelsList');
+        const custom = JSON.parse(localStorage.getItem('custom_models') || '[]');
+        
+        container.innerHTML = custom.map((model, index) => `
+            <div class="custom-model-item">
+                <span>${model.name} (${model.provider})</span>
+                <button onclick="App.deleteCustomModel(${index})">Delete</button>
+            </div>
+        `).join('');
+    },
+
+    addCustomModel() {
+        const id = document.getElementById('customModelId').value.trim();
+        const name = document.getElementById('customModelName').value.trim();
+        const provider = document.getElementById('customModelProvider').value;
+        const icon = document.getElementById('customModelIcon').value.trim() || '🤖';
+        const desc = document.getElementById('customModelDesc').value.trim() || 'Custom model';
+        
+        if (!id || !name) {
+            alert('Model ID and Name are required');
+            return;
+        }
+        
+        const custom = JSON.parse(localStorage.getItem('custom_models') || '[]');
+        custom.push({ id, name, provider, icon, desc });
+        localStorage.setItem('custom_models', JSON.stringify(custom));
+        
+        document.getElementById('customModelId').value = '';
+        document.getElementById('customModelName').value = '';
+        document.getElementById('customModelIcon').value = '';
+        document.getElementById('customModelDesc').value = '';
+        
+        this.renderCustomModelsList();
+    },
+
+    deleteCustomModel(index) {
+        const custom = JSON.parse(localStorage.getItem('custom_models') || '[]');
+        custom.splice(index, 1);
+        localStorage.setItem('custom_models', JSON.stringify(custom));
+        this.renderCustomModelsList();
+    },
+
     renderModelList() {
-        const gemini = this.models.filter(m => m.provider === 'Google');
-        const groq = this.models.filter(m => m.provider === 'Groq');
+        const providers = ['groq', 'gemini', 'openai', 'anthropic', 'xai'];
+        const providerNames = {
+            groq: 'Groq (Default)',
+            gemini: 'Google Gemini',
+            openai: 'OpenAI',
+            anthropic: 'Anthropic Claude',
+            xai: 'xAI Grok'
+        };
         
         const container = document.getElementById('modelList');
-        container.innerHTML = `
-            <div class="model-section">
-                <div class="model-section-title">Google Gemini</div>
-                ${gemini.map(m => this.renderModelOption(m)).join('')}
-            </div>
-            <div class="model-section">
-                <div class="model-section-title">Groq</div>
-                ${groq.map(m => this.renderModelOption(m)).join('')}
-            </div>
-        `;
+        container.innerHTML = providers.map(provider => {
+            const models = this.models.filter(m => m.provider === provider);
+            if (models.length === 0) return '';
+            return `
+                <div class="model-section">
+                    <div class="model-section-title">${providerNames[provider]}</div>
+                    ${models.map(m => this.renderModelOption(m)).join('')}
+                </div>
+            `;
+        }).join('');
         
         container.querySelectorAll('.model-option').forEach(el => {
             el.addEventListener('click', () => {

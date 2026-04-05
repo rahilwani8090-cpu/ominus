@@ -46,8 +46,8 @@
                     Settings
                 </button>
                 <button class="model-selector" id="modelSelector">
-                    <span class="model-icon">⚡</span>
-                    <span class="model-name">Gemini 2.5 Flash</span>
+                    <span class="model-icon">🦙</span>
+                    <span class="model-name">Llama 3.3 70B</span>
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
@@ -131,7 +131,7 @@
     <!-- Settings Modal -->
     <div class="settings-modal" id="settingsModal">
         <div class="modal-overlay"></div>
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
                 <h3>Settings</h3>
                 <button class="close-modal" id="closeSettingsModal">
@@ -141,17 +141,77 @@
                     </svg>
                 </button>
             </div>
-            <div class="settings-content">
-                <div class="setting-item">
-                    <label for="geminiKey">Gemini API Key</label>
-                    <input type="password" id="geminiKey" placeholder="Enter your Gemini API key">
-                    <span class="setting-hint">Get from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></span>
+            <div class="settings-content" style="max-height: 70vh; overflow-y: auto;">
+                <!-- Groq (Pre-configured) -->
+                <div class="setting-section">
+                    <h4>🔥 Groq (Default - Pre-configured)</h4>
+                    <div class="setting-item">
+                        <label for="groqKey">Groq API Key</label>
+                        <input type="password" id="groqKey" placeholder="Pre-configured - change if needed">
+                        <span class="setting-hint">Get from <a href="https://console.groq.com/keys" target="_blank">Groq Console</a> | Default works out-of-box</span>
+                    </div>
                 </div>
-                <div class="setting-item">
-                    <label for="groqKey">Groq API Key</label>
-                    <input type="password" id="groqKey" placeholder="Enter your Groq API key">
-                    <span class="setting-hint">Get from <a href="https://console.groq.com/keys" target="_blank">Groq Console</a></span>
+
+                <!-- Gemini -->
+                <div class="setting-section">
+                    <h4>🔥 Google Gemini</h4>
+                    <div class="setting-item">
+                        <label for="geminiKey">Gemini API Key</label>
+                        <input type="password" id="geminiKey" placeholder="Enter your Gemini API key">
+                        <span class="setting-hint">Get from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></span>
+                    </div>
                 </div>
+
+                <!-- OpenAI -->
+                <div class="setting-section">
+                    <h4>🎯 OpenAI</h4>
+                    <div class="setting-item">
+                        <label for="openaiKey">OpenAI API Key</label>
+                        <input type="password" id="openaiKey" placeholder="Enter your OpenAI API key">
+                        <span class="setting-hint">Get from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></span>
+                    </div>
+                </div>
+
+                <!-- Anthropic -->
+                <div class="setting-section">
+                    <h4>🎭 Anthropic Claude</h4>
+                    <div class="setting-item">
+                        <label for="anthropicKey">Anthropic API Key</label>
+                        <input type="password" id="anthropicKey" placeholder="Enter your Anthropic API key">
+                        <span class="setting-hint">Get from <a href="https://console.anthropic.com/settings/keys" target="_blank">Anthropic Console</a></span>
+                    </div>
+                </div>
+
+                <!-- xAI -->
+                <div class="setting-section">
+                    <h4>🚀 xAI Grok</h4>
+                    <div class="setting-item">
+                        <label for="xaiKey">xAI API Key</label>
+                        <input type="password" id="xaiKey" placeholder="Enter your xAI API key">
+                        <span class="setting-hint">Get from <a href="https://console.x.ai" target="_blank">xAI Console</a></span>
+                    </div>
+                </div>
+
+                <!-- Custom Models -->
+                <div class="setting-section">
+                    <h4>⚙️ Custom Models</h4>
+                    <div id="customModelsList"></div>
+                    <div class="add-custom-model">
+                        <input type="text" id="customModelId" placeholder="Model ID (e.g., gpt-5)">
+                        <input type="text" id="customModelName" placeholder="Display Name">
+                        <select id="customModelProvider">
+                            <option value="groq">Groq</option>
+                            <option value="openai">OpenAI</option>
+                            <option value="gemini">Gemini</option>
+                            <option value="anthropic">Anthropic</option>
+                            <option value="xai">xAI</option>
+                        </select>
+                        <input type="text" id="customModelIcon" placeholder="Icon emoji (e.g., 🤖)">
+                        <input type="text" id="customModelDesc" placeholder="Description">
+                        <button id="addCustomModel">Add Model</button>
+                    </div>
+                </div>
+
                 <button class="save-settings-btn" id="saveSettings">Save Settings</button>
             </div>
         </div>
