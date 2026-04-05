@@ -578,7 +578,7 @@ const App = {
         const input = document.getElementById('messageInput');
         const content = input.value.trim();
         
-        if (!content && this.attachments.length === 0) return;
+        if (!this.validateInput(content) && this.attachments.length === 0) return;
         
         await this.sendMessageWithContent(content);
         
@@ -656,6 +656,15 @@ const App = {
         
         const sendBtn = document.getElementById('sendBtn');
         sendBtn.disabled = input.value.trim().length === 0 && this.attachments.length === 0;
+    },
+
+    validateInput(text) {
+        if (!text || text.trim().length === 0) return false;
+        if (text.length > 50000) { // Safety limit
+            alert('Message is too long (max 50,000 characters)');
+            return false;
+        }
+        return true;
     },
 
     handleKeydown(e) {
