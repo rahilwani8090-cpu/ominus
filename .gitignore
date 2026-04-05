@@ -26,3 +26,5 @@ Thumbs.db
 
 # Node modules if any
 node_modules/
+*.md
+COMPLETION-SUMMARY.txt
